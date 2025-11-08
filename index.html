@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RugCast Live - Broadcasting Chaos 24/7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Slab&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+  font-family: "Antic Slab", serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: url('a.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid #7f1d1d;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+              font-family: "Paytone One", sans-serif;
+
+        }
+
+        .header-top {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 300px;
+            height: 300px;
+            object-fit: contain;
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .twitter-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #1f2937;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .twitter-link:hover {
+            background: #374151;
+        }
+
+        .live-bar {
+            border-top: 1px solid rgba(127, 29, 29, 0.5);
+            background: rgba(127, 29, 29, 0.3);
+            padding: 8px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .live-indicator span {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .live-bar .subtitle {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        /* Main Content Grid */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 20px;
+            min-height: calc(100vh - 240px);
+        }
+
+        /* Panels */
+        .panel {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(127, 29, 29, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            background: rgba(127, 29, 29, 0.5);
+            border-bottom: 1px solid rgba(127, 29, 29, 0.3);
+            padding: 10px 15px;
+        }
+
+        .panel-header h2 {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Left Panel - Breaking Rugs */
+        .rug-feed {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #7f1d1d #1f2937;
+        }
+
+        .rug-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .rug-feed::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        .rug-feed::-webkit-scrollbar-thumb {
+            background: #7f1d1d;
+            border-radius: 3px;
+        }
+
+        .rug-item {
+            border-bottom: 1px solid rgba(31, 41, 55, 0.5);
+            padding: 12px;
+            transition: background 0.3s;
+        }
+
+        .rug-item:hover {
+            background: rgba(127, 29, 29, 0.2);
+        }
+
+        .rug-item-header {
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .rug-badge {
+            font-size: 10px;
+            background: #dc2626;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .rug-title {
+            font-size: 12px;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .rug-time {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* Center Panel */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stream-container {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(127, 29, 29, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .stream-window {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .on-air-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #dc2626;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .radio-icon {
+            width: 14px;
+            height: 14px;
+            animation: pulse 2s infinite;
+        }
+
+        .viewer-count {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .stream-placeholder {
+            text-align: center;
+        }
+
+        .placeholder-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(127, 29, 29, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: pulse 3s infinite;
+        }
+
+        .placeholder-icon svg {
+            width: 60px;
+            height: 60px;
+            color: #7f1d1d;
+        }
+
+        .segment-info {
+            background: rgba(127, 29, 29, 0.3);
+            border-top: 1px solid rgba(127, 29, 29, 0.3);
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        .segment-info p {
+            margin-bottom: 8px;
+        }
+
+        .segment-label {
+            font-weight: bold;
+            color: #fca5a5;
+        }
+
+        .segment-next {
+            color: #6b7280;
+        }
+
+        /* Archive Section */
+        .archive-section {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(127, 29, 29, 0.3);
+            border-radius: 4px;
+            padding: 15px;
+        }
+
+        .archive-section h3 {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .archive-section p {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .archive-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .archive-btn {
+            font-size: 11px;
+            padding: 6px 12px;
+            background: rgba(127, 29, 29, 0.3);
+            border: none;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .archive-btn:hover {
+            background: rgba(127, 29, 29, 0.5);
+        }
+
+        /* Right Panel - Chat */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #7f1d1d #1f2937;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #7f1d1d;
+            border-radius: 3px;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .chat-user {
+            color: #6b7280;
+        }
+
+        .chat-text {
+            color: #d1d5db;
+        }
+
+        .chat-system {
+            background: rgba(202, 138, 4, 0.2);
+            padding: 8px;
+            border-radius: 3px;
+            color: #fbbf24;
+            font-size: 11px;
+        }
+
+        .chat-input-area {
+            border-top: 1px solid rgba(127, 29, 29, 0.3);
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #374151;
+            border-radius: 3px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        .chat-send-btn {
+            padding: 6px 15px;
+            background: #dc2626;
+            border: none;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chat-send-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* Bottom Ticker */
+        .ticker-bar {
+            background: rgba(127, 29, 29, 0.5);
+            border-top: 1px solid #7f1d1d;
+            padding: 10px 0;
+            overflow: hidden;
+        }
+
+        .ticker-content {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll 30s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            margin: 0 30px;
+            font-size: 14px;
+        }
+
+        .ticker-name {
+            font-weight: bold;
+        }
+
+        .ticker-change {
+            margin-left: 10px;
+        }
+
+        .ticker-positive {
+            color: #10b981;
+        }
+
+        .ticker-negative {
+            color: #ef4444;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid rgba(127, 29, 29, 0.3);
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-bottom: 5px;
+        }
+
+        footer p:last-child {
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo-text">
+                        <h1>RUGCAST LIVE</h1>
+                        <p>Broadcasting chaos, 24/7.</p>
+                    </div>
+                </div>
+                
+                <a href="https://x.com/RugCastLive" target="_blank" class="twitter-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    @RugCastLive
+                </a>
+            </div>
+            
+            <div class="live-bar">
+                <div class="live-indicator">
+                    <div class="pulse-dot"></div>
+                    <span>LIVE</span>
+                </div>
+                
+                <span class="subtitle">— Reporting from the Chain</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Breaking Rugs -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Breaking Rugs</h2>
+                </div>
+                <div class="rug-feed" id="rugFeed"></div>
+            </div>
+
+            <!-- Center Panel: Stream -->
+            <div class="center-panel">
+                <div class="stream-container">
+                    <div class="stream-window">
+                        <div class="on-air-badge">
+                            <svg class="radio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="2"/>
+                                <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/>
+                            </svg>
+                            ON AIR
+                        </div>
+                        <div class="viewer-count">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span id="viewerCount">1,247</span>
+                        </div>
+                        <div class="stream-placeholder">
+                            <div class="placeholder-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="2"/>
+                                    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/>
+                                </svg>
+                            </div>
+                            <p style="color: #6b7280; font-size: 14px;">5MIN ETA</p>
+                            <p style="color: #4b5563; font-size: 12px; margin-top: 5px;">Live broadcast in progress</p>
+                        </div>
+                    </div>
+                    
+                    <div class="segment-info">
+                        <p><span class="segment-label">CURRENT SEGMENT:</span><br>$DOGFLOP – Instant 99% Dump</p>
+                        <p><span class="segment-next">NEXT UP:</span><br><span style="color: #9ca3af;">The 5-Second Presale</span></p>
+                    </div>
+                </div>
+
+                <div class="archive-section">
+                    <h3>Archive Access</h3>
+                                        <img src="v-removebg-preview.png" alt="RugCast Live" class="logo-img">
+
+                    <p>Watch past broadcasts — The Great Rugs Collection.</p>
+                    <div class="archive-buttons">
+                        <button class="archive-btn">Replay #34</button>
+                        <button class="archive-btn">Replay #33</button>
+                        <button class="archive-btn">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Chat -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Live Chat</h2>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type message...">
+                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Ticker -->
+        <div class="ticker-bar">
+            <div class="ticker-content" id="tickerContent"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>RugCast Live monitors blockchain chaos in real time.</p>
+            <p>From instant presales to silent exits, every failure is newsworthy. Funded by the fallen. Powered by the brave.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data
+const rugEvents = [
+    { title: '$MOONRUG down 97% in 3 minutes', type: 'BREAKING' },
+    { title: '$TRAPFUN dev wallet drained 2.4 SOL', type: 'ALERT' },
+    { title: '$DUMBUSD halted at 0.0000001', type: 'LIVE UPDATE' },
+    { title: '$EXITSCAM liquidity removed', type: 'BREAKING' },
+    { title: '$HONEYPOT contract locked', type: 'ALERT' },
+    { title: '$RUGPULL team disappeared', type: 'BREAKING' },
+    { title: '$SCAMTOKEN presale vanished', type: 'ALERT' },
+    { title: '$PONZI withdrawals disabled', type: 'LIVE UPDATE' },
+    { title: '$FAKEIT dev doxxed and ran', type: 'BREAKING' },
+    { title: '$CHAIRCOIN down 99.8%', type: 'ALERT' }
+];
+
+        const sampleChats = [
+            { user: 'FkD7...m2Pq', msg: 'nigga this worksssss' },
+            { user: '8Bx2...7nW4', msg: 'plòsdds' },
+            { user: 'Gm9L...4kT8', msg: 'Bruh' },
+            { user: '3Pq5...9sC2', msg: 'SEND THIS SIII' },
+            { user: '7Wn1...6vB4', msg: 'yo this rug?' },
+            { user: '2Ft9...1dM7', msg: 'gay' },
+        ];
+
+        const tickerCoins = [
+            { name: '$BAGHOLDERS', change: -92 },
+            { name: '$EXITFUN', change: -87 },
+            { name: '$GONE', change: -99 },
+            { name: '$HOPE', change: 3 },
+            { name: '$REKT', change: -94 },
+            { name: '$TRUST', change: -88 },
+            { name: '$SAFU', change: -95 },
+            { name: '$DEGEN', change: -91 }
+        ];
+
+        // Initialize
+        let rugFeedData = [];
+        let chatMessagesData = [];
+
+        function generateSOLWallet() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
+            const start = Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+            const end = Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+            return `${start}...${end}`;
+        }
+
+        function initializeRugFeed() {
+            for (let i = 0; i < 5; i++) {
+                const event = rugEvents[i];
+                const time = new Date(Date.now() - i * 120000).toLocaleTimeString();
+                rugFeedData.push({ ...event, time, id: Date.now() + i });
+            }
+            renderRugFeed();
+        }
+
+        function renderRugFeed() {
+            const feed = document.getElementById('rugFeed');
+            feed.innerHTML = rugFeedData.map(event => `
+                <div class="rug-item">
+                    <div class="rug-item-header">
+                        <span class="rug-badge">${event.type}</span>
+                        <div style="flex: 1;">
+                            <div class="rug-title">${event.title}</div>
+                            <div class="rug-time">${event.time}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addRugEvent() {
+            const randomEvent = rugEvents[Math.floor(Math.random() * rugEvents.length)];
+            const newEvent = {
+                ...randomEvent,
+                time: new Date().toLocaleTimeString(),
+                id: Date.now()
+            };
+            rugFeedData.unshift(newEvent);
+            rugFeedData = rugFeedData.slice(0, 10);
+            renderRugFeed();
+        }
+
+        function initializeChat() {
+            for (let i = 0; i < 4; i++) {
+                chatMessagesData.push({ ...sampleChats[i], id: Date.now() + i, system: false });
+            }
+            renderChat();
+        }
+
+        function renderChat() {
+            const chat = document.getElementById('chatMessages');
+            chat.innerHTML = chatMessagesData.map(msg => {
+                if (msg.system) {
+                    return `<div class="chat-message"><div class="chat-system">[SYSTEM] ${msg.msg}</div></div>`;
+                } else {
+                    return `<div class="chat-message"><span class="chat-user">${msg.user}:</span> <span class="chat-text">${msg.msg}</span></div>`;
+                }
+            }).join('');
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function addChatMessage() {
+            const isSystem = Math.random() > 0.7;
+            let newMessage;
+
+            if (isSystem) {
+                const coins = ['$CHAIRCOIN', '$RUGPULL', '$SCAMMY', '$HONEYPOT', '$EXITNOW'];
+                newMessage = {
+                    id: Date.now(),
+                    system: true,
+                    msg: `New rug event detected: ${coins[Math.floor(Math.random() * coins.length)]}`
+                };
+            } else {
+                const randomChat = sampleChats[Math.floor(Math.random() * sampleChats.length)];
+                newMessage = { ...randomChat, id: Date.now(), system: false };
+            }
+
+            chatMessagesData.push(newMessage);
+            chatMessagesData = chatMessagesData.slice(-20);
+            renderChat();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const newMessage = {
+                id: Date.now(),
+                user: generateSOLWallet(),
+                msg: message,
+                system: false
+            };
+
+            chatMessagesData.push(newMessage);
+            chatMessagesData = chatMessagesData.slice(-20);
+            renderChat();
+            input.value = '';
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function initializeTicker() {
+            const ticker = document.getElementById('tickerContent');
+            const doubledCoins = [...tickerCoins, ...tickerCoins];
+            ticker.innerHTML = doubledCoins.map(coin => `
+                <div class="ticker-item">
+                    <span class="ticker-name">${coin.name}</span>
+                    <span class="ticker-change ${coin.change >= 0 ? 'ticker-positive' : 'ticker-negative'}">
+                        ${coin.change > 0 ? '+' : ''}${coin.change}%
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function updateViewerCount() {
+            const count = document.getElementById('viewerCount');
+            const current = parseInt(count.textContent.replace(',', ''));
+            const change = Math.floor(Math.random() * 11) - 5;
+            const newCount = Math.max(1000, current + change);
+            count.textContent = newCount.toLocaleString();
+        }
+
+        // Initialize everything
+        initializeRugFeed();
+        initializeChat();
+        initializeTicker();
+
+        // Set intervals
+        setInterval(addRugEvent, 4000);
+        setInterval(addChatMessage, 5000);
+        setInterval(updateViewerCount, 8000);
+    </script>
+</body>
+</html>
